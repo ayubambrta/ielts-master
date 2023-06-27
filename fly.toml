@@ -1,0 +1,18 @@
+# fly.toml app configuration file generated for ielts-projects on 2023-06-23T15:24:06+07:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "ielts-projects"
+primary_region = "sin"
+
+[mounts]
+  source="ielts_data"
+  destination="/data"
+  
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
