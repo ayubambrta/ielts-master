@@ -6,13 +6,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 from keras.models import load_model
 from flask import Flask, request, jsonify
+from transformers import pipeline
 from happytransformer import HappyTextToText
 
 from uploadFile import *
 from modelDownload import *
 from modelFluency import *
-from modelLexical import *
 from modelGrammar import *
+from modelLexical import *
+# from modelPronun import *
 
 load_dotenv()
 
@@ -60,9 +62,12 @@ print("Load Lexical Model Finished")
 grammar_whisper_model = whisper.load_model("base.en")
 print("Grammar Load Whisper Finished")
 
-# [GRAMMAR Load Model from HappyTransformer]
+# Grammar Load Model from HappyTransformer
 hafid_happy_t5 = HappyTextToText("T5", "hafidikhsan/IELTS-GEC-T5-C4_200M-125k")
 print("Load Grammar Model Finished")
+
+# Pronun Load Model
+pronunciation_model = "hafidikhsan/Wav2vec2-large-robust-Pronounciation-Evaluation"
 
 @app.route("/")
 def home():
@@ -83,13 +88,15 @@ def upload():
     # Grammar Prediction
     evaluation = GrammarEval()
     band_eval = grammar(hafid_happy_t5, grammar_whisper_model, audioUrl, evaluation)
-    grammarBand, asr = to_level(band_eval)
-    
+    grammarBand = to_level(band_eval)
+    # asr = to_level(band_eval)
+
     # Lexical Prediction
     lexicalBand = lexical_calculation(audioUrl, model, tokenizer, asr_model)
 
     # Prediction Sample
-    pronunciationBand = 0
+    classifier = pipeline("audio-classification", model = pronunciation_model)
+    pronunciationBand = classifier(audioUrl)
 
     # Delete Audio After Prediction
     cloudinary.uploader.destroy(uploadLink['public_id'], resource_type="video")
