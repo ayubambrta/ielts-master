@@ -68,35 +68,55 @@ print("Load Grammar Model Finished")
 
 # Pronun Load Model
 pronunciation_model = "hafidikhsan/Wav2vec2-large-robust-Pronounciation-Evaluation"
+classifier = pipeline("audio-classification", model=pronunciation_model)
 
 @app.route("/")
 def home():
-    return "Hello, This is IELTS API Docker Master v.2.3 - (Fluency, Grammar, Lexical Update)"
+    return "Hello, This is IELTS API Docker Master v.2.3 - (Complete Model Update)"
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    print("This is Upload IELTS API Docker Master v.2.3 - (Fluency, Grammar, Lexical Update)")
+    print("This is Upload IELTS API Docker Master v.2.4 - (Complete Model Update)")
 
     file_to_upload = request.files['file']
     uploadLink = uploadFile(file_to_upload)
     audioUrl = (uploadLink['secure_url'])
 
     # Fluency Prediction
+    print("Start Fluency Prediction")
     datasetcheck, extracted_features = feature_extraction(audioUrl)
     fluencyBand = fluency_calculation(loaded_model_fluency, datasetcheck, extracted_features)
+    print("Finishing Fluency Prediction")
 
     # Grammar Prediction
+    print("Start Grammar Prediction")
     evaluation = GrammarEval()
     band_eval = grammar(hafid_happy_t5, grammar_whisper_model, audioUrl, evaluation)
     grammarBand = to_level(band_eval)
-    # asr = to_level(band_eval)
+    print("Finishing Grammar Prediction")
 
     # Lexical Prediction
+    print("Start Lexical Prediction")
     lexicalBand = lexical_calculation(audioUrl, model, tokenizer, asr_model)
+    print("Finishing Lexical Prediction")    
 
     # Prediction Sample
-    classifier = pipeline("audio-classification", model = pronunciation_model)
-    pronunciationBand = classifier(audioUrl)
+    print("Start Pronunciation Prediction")
+
+    predict = classifier(audioUrl)
+    pronunciationBand = list(predict[0].values())
+    if pronunciationBand[1] == "proficient":
+        pronunciationBand = 9
+    elif pronunciationBand[1] == "advanced":
+        pronunciationBand = 8
+    elif pronunciationBand[1] == "intermediate":
+        pronunciationBand = 6.5
+    elif pronunciationBand[1] == "beginer":
+        pronunciationBand = 5
+    else:
+        pronunciationBand = 0
+
+    print("Finishing Pronunciation Prediction")        
 
     # Delete Audio After Prediction
     cloudinary.uploader.destroy(uploadLink['public_id'], resource_type="video")
@@ -108,4 +128,4 @@ def upload():
 
 # Deploy debug must delete
 if __name__ == "__main__":
-    app.run(debug=True, use_reloader=False, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+    app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
