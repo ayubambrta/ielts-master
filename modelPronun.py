@@ -8,21 +8,17 @@ classifier = pipeline("audio-classification", model="hafidikhsan/Wav2vec2-large-
 
 # Pronunciation Prediction
 predict = classifier(audioUrl)
-
-# print(type(predict))
-# print(predict)
-
 pronunciationBand = list(predict[0].values())
 
 def prediction():
     if pronunciationBand[1] == "proficient":
         return 9
     elif pronunciationBand[1] == "advanced":
-        return 8
+        return 7
     elif pronunciationBand[1] == "intermediate":
-        return 6.5
-    elif pronunciationBand[1] == "beginer":
         return 5
+    elif pronunciationBand[1] == "beginer":
+        return 3
     else:
         return 0
     

@@ -108,11 +108,11 @@ def upload():
     if pronunciationBand[1] == "proficient":
         pronunciationBand = 9
     elif pronunciationBand[1] == "advanced":
-        pronunciationBand = 8
+        pronunciationBand = 7
     elif pronunciationBand[1] == "intermediate":
-        pronunciationBand = 6.5
-    elif pronunciationBand[1] == "beginer":
         pronunciationBand = 5
+    elif pronunciationBand[1] == "beginer":
+        pronunciationBand = 3
     else:
         pronunciationBand = 0
 
