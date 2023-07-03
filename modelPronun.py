@@ -1,5 +1,30 @@
 from transformers import pipeline
 
-# Predict
+audioUrl = "https://res.cloudinary.com/dntqqcuci/video/upload/v1687939594/Citeureup_2_cgvbar.wav"
+
+# Pronunciation Load Model
 pronunciation_model = "hafidikhsan/Wav2vec2-large-robust-Pronounciation-Evaluation"
 classifier = pipeline("audio-classification", model="hafidikhsan/Wav2vec2-large-robust-Pronounciation-Evaluation")
+
+# Pronunciation Prediction
+predict = classifier(audioUrl)
+
+# print(type(predict))
+# print(predict)
+
+pronunciationBand = list(predict[0].values())
+
+def prediction():
+    if pronunciationBand[1] == "proficient":
+        return 9
+    elif pronunciationBand[1] == "advanced":
+        return 8
+    elif pronunciationBand[1] == "intermediate":
+        return 6.5
+    elif pronunciationBand[1] == "beginer":
+        return 5
+    else:
+        return 0
+    
+print(prediction())
+    
