@@ -72,7 +72,7 @@ classifier = pipeline("audio-classification", model=pronunciation_model)
 
 @app.route("/")
 def home():
-    return "Hello, This is IELTS API Docker Master v.2.3 - (Complete Model Update)"
+    return "Hello, This is IELTS API Docker Master v.2.4 - (Complete Model Update)"
 
 @app.route("/upload", methods=["POST"])
 def upload():
