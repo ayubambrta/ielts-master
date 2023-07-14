@@ -14,7 +14,6 @@ from modelDownload import *
 from modelFluency import *
 from modelGrammar import *
 from modelLexical import *
-# from modelPronun import *
 
 load_dotenv()
 
@@ -92,7 +91,7 @@ def upload():
     print("Start Grammar Prediction")
     evaluation = GrammarEval()
     band_eval = grammar(hafid_happy_t5, grammar_whisper_model, audioUrl, evaluation)
-    grammarBand = to_level(band_eval)
+    grammarBand, asr = to_level(band_eval)
     print("Finishing Grammar Prediction")
 
     # Lexical Prediction
@@ -102,7 +101,6 @@ def upload():
 
     # Prediction Sample
     print("Start Pronunciation Prediction")
-
     predict = classifier(audioUrl)
     pronunciationBand = list(predict[0].values())
     if pronunciationBand[1] == "proficient":
@@ -115,7 +113,6 @@ def upload():
         pronunciationBand = 3
     else:
         pronunciationBand = 0
-
     print("Finishing Pronunciation Prediction")        
 
     # Delete Audio After Prediction
@@ -124,7 +121,8 @@ def upload():
     return jsonify({"Fluency Band": fluencyBand,
                     "Grammar Band": grammarBand,
                     "Lexical Band": lexicalBand,
-                    "Pronunciation Band": pronunciationBand})
+                    "Pronunciation Band": pronunciationBand,
+                    "Transcript": asr})
 
 # Deploy debug must delete
 if __name__ == "__main__":

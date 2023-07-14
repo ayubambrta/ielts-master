@@ -96,7 +96,7 @@ def to_level(band_eval):
                     else:
                         band = 9
 
-    return band
+    return band, band_eval.asr_text
     
 # Define function to find root
 def find_root_of_sentence(doc):
