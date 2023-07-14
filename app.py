@@ -106,12 +106,15 @@ LM_pronun_end = datetime.datetime.now()
 print("Pronunciation Load Model Finished")
 LM_pronun = (LM_pronun_end - LM_pronun_start).total_seconds()
 
+model_process = (MC_fluency + LM_fluency + MC_lexical + LM_lexical + LM_grammar + LM_pronun)
+
 print("Fluency Check Model Process  :", MC_fluency, "s")
 print("Fluency Load Model Process   :", LM_fluency, "s")
 print("Lexical Check Model Process  :", MC_lexical, "s")
 print("Lexical Load Model Process   :", LM_lexical, "s")
 print("Grammar Load Model Process   :", LM_grammar, "s")
 print("Pronun Load Model Process    :", LM_pronun, "s")
+print("All Model Process          :", model_process, "s")
 
 @app.route("/")
 def home():
@@ -189,12 +192,15 @@ def upload():
 
     delete_process = (delete_end - delete_start).total_seconds()
 
+    predict_process = (upload_process + fluency_process + grammar_process + lexical_process + pronun_process + delete_process)
+
     print("Upload Process   :", upload_process, "s")
     print("Fluency Process  :", fluency_process, "s")
     print("Grammar Process  :", grammar_process, "s")
     print("Lexical Process  :", lexical_process, "s")
     print("Pronun Process   :", pronun_process, "s")
     print("Delete Process   :", delete_process, "s")
+    print("All Process      :", predict_process, "s")
 
     return jsonify({"Fluency Band": fluencyBand,
                     "Grammar Band": grammarBand,
